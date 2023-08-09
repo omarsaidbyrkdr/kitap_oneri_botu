@@ -1,0 +1,44 @@
+import discord
+from discord.ext import commands
+import random
+import os
+
+intents = discord.Intents.all()
+
+bot = commands.Bot(intents=intents, command_prefix='!')
+
+@bot.event
+async def on_ready():
+    print("bot uyanık")
+
+@bot.command()
+async def meme_at(ctx):
+    liste = os.listdir("memes")
+    rastgele_meme = random.choice(liste)
+    tam_uzanti = "memes/" + rastgele_meme
+    f = open(tam_uzanti, "rb")
+    meme = discord.File(f)
+    await ctx.send(file=meme)
+
+kitap_turleri = {
+    'roman': ['Kitap 1', 'Kitap 2', 'Kitap 3'],
+    'bilim kurgu': ['Kitap 4', 'Kitap 5', 'Kitap 6'],
+    'polisiye': ['Kitap 7', 'Kitap 8', 'Kitap 9'],
+    'komedi': ['Kitap 10', 'Kitap 11', 'Kitap 12'],
+    'korku': ['Kitap 13', 'Kitap 14', 'Kitap 15']
+}
+
+@bot.command()
+async def kitap_oner(ctx, tür):
+    if tür in kitap_turleri:
+        recommended_book = random.choice(kitap_turleri[tür])
+        response = f"{ctx.author.mention}, size {tür} türünde {recommended_book} adlı bir kitap öneriyorum."
+    else:
+        valid_genres = ', '.join(kitap_turleri.keys())
+        response = f"{ctx.author.mention}, geçerli bir kitap türü seçin: {valid_genres}"
+    
+    await ctx.send(response)
+
+bot.run("TOKEN")
+
+
